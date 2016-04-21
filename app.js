@@ -10,12 +10,6 @@ var randomIDset = function() {
 		return ID[Math.floor(Math.random()*ID.length)];
 	};
 	randomID = randomIDpicker();
-	
-	/* Set the hyperlink to the appropriate ID */
-	$(document).ready(function(){
-		$("#link").html("<a href='https://fcaw.library.umass.edu/F/?func=direct&doc_number=0" + randomID + "&doc_library=FCL01' target='_blank'>Just go to my library page.</a>");
-		$("#checkoutlink").html("<a href='https://fcaw.library.umass.edu/F/?func=title-request-form&bib_doc_number=0" + randomID + "target='_blank'>Check me out!</a>");
-	});
 
 	/* Call the information about the ID w/ a PHP proxy */
 	$(document).ready(function(){
@@ -27,12 +21,12 @@ var randomIDset = function() {
 			headers: {
 				"X-Proxy-Url": "http://fcaw.library.umass.edu/X?op=find-doc&doc_num=0" + randomID + "&base=FCL01",
 			},
-			success: xmlParser
+			success: randomWriter
 		});
 	});
 
 	/* The function that does the writing */
-	function xmlParser(xml) {
+	function randomWriter(xml) {
 		$(xml).find("oai_marc").each(function(){
 
 				// This sort of gets the job done in limited cases, but I'm going to have
@@ -52,6 +46,12 @@ var randomIDset = function() {
 				} else {
 					$("#author").html($(this).find('varfield[id="100"] subfield[label="a"]'));
 				};
+		});
+
+		/* Set the hyperlink to the appropriate ID and write them out at the same time as metadata*/
+		$(document).ready(function(){
+			$("#link").html("<a href='https://fcaw.library.umass.edu/F/?func=direct&doc_number=0" + randomID + "&doc_library=FCL01' target='_blank'>Just go to my library page.</a>");
+			$("#checkoutlink").html("<a href='https://fcaw.library.umass.edu/F/?func=title-request-form&bib_doc_number=0" + randomID + "target='_blank'>Check me out!</a>");
 		});
 	};
 }
