@@ -6,24 +6,34 @@ var randomInfo;
 var randomIDset = function() {
 
 	/* Choose a random ID and set it to the randomID variable */
-	var randomIDpicker = function() {
-		return ID[Math.floor(Math.random()*ID.length)];
-	};
-	randomID = randomIDpicker();
-
-	/* Call the information about the ID w/ a PHP proxy */
 	$(document).ready(function(){
 		$.ajax({
 			type: "GET",
-			dataType: "html",
+			dataType: "json",
 			async: "false",
-			url: "proxy.php",
-			headers: {
-				"X-Proxy-Url": "http://fcaw.library.umass.edu/X?op=find-doc&doc_num=0" + randomID + "&base=FCL01",
-			},
-			success: randomWriter
+			url: "public/php/rand-id.php",
+			success: function(data) {
+				randomID = data;
+				randomCaller();
+			}
 		});
 	});
+
+	/* Call the information about the ID w/ a PHP proxy */
+	function randomCaller() {
+		$(document).ready(function(){
+			$.ajax({
+				type: "GET",
+				dataType: "html",
+				async: "false",
+				url: "public/php/proxy.php",
+				headers: {
+					"X-Proxy-Url": "http://fcaw.library.umass.edu/X?op=find-doc&doc_num=0" + randomID + "&base=FCL01",
+				},
+				success: randomWriter
+			});
+		});
+	};
 
 	/* The function that does the writing */
 	function randomWriter(xml) {
